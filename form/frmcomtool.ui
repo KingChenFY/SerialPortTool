@@ -175,7 +175,7 @@
      <x>200</x>
      <y>10</y>
      <width>591</width>
-     <height>581</height>
+     <height>321</height>
     </rect>
    </property>
    <property name="frameShape">
@@ -196,7 +196,7 @@
       <x>10</x>
       <y>10</y>
       <width>571</width>
-      <height>561</height>
+      <height>301</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout_2">
@@ -232,7 +232,17 @@
       </layout>
      </item>
      <item>
-      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="6,1,0">
+      <layout class="QHBoxLayout" name="horizontalLayout_2" stretch="0,6,0">
+       <item>
+        <widget class="QCheckBox" name="checkBox_SaveInFile">
+         <property name="text">
+          <string>保存至文件</string>
+         </property>
+         <property name="tristate">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
        <item>
         <widget class="QLineEdit" name="lineEdit_SaveDir">
          <property name="text">
@@ -244,16 +254,9 @@
         </widget>
        </item>
        <item>
-        <widget class="QPushButton" name="pushButton_DirSelect">
+        <widget class="QPushButton" name="pushButton_ClearTxtMain">
          <property name="text">
-          <string>打开目录</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_SaveInDir">
-         <property name="text">
-          <string>保存</string>
+          <string>清空窗口</string>
          </property>
         </widget>
        </item>
@@ -289,29 +292,36 @@
       <x>10</x>
       <y>10</y>
       <width>161</width>
-      <height>80</height>
+      <height>81</height>
      </rect>
     </property>
     <layout class="QGridLayout" name="gridLayout">
      <item row="0" column="1">
-      <widget class="QLineEdit" name="lineEdit_AutoSendInTime"/>
-     </item>
-     <item row="0" column="0">
       <widget class="QCheckBox" name="checkBox_AutoSendInTime">
        <property name="text">
         <string>定时发送</string>
        </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
       </widget>
      </item>
      <item row="1" column="1">
-      <widget class="QLineEdit" name="lineEdit_AutoSaveInTime"/>
-     </item>
-     <item row="1" column="0">
-      <widget class="QCheckBox" name="checkBox_AutoSaveInTime">
+      <widget class="QCheckBox" name="checkBox_HexReceive">
        <property name="text">
-        <string>自动保存</string>
+        <string>Hex 接收</string>
        </property>
       </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QCheckBox" name="checkBox_HexSend">
+       <property name="text">
+        <string>Hex 发送</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="0">
+      <widget class="QLineEdit" name="lineEdit_AutoSendInTime"/>
      </item>
     </layout>
    </widget>

@@ -20,6 +20,7 @@ private:
     Ui::frmComTool *ui;
 
     bool isShow;                //是否显示数据
+    bool isSave;                //是否保存
     int sleepTime;              //接收延时时间
 
     QextSerialPort *com;        //串口通信对象
@@ -41,14 +42,14 @@ private slots:
     void readData();            //读取串口数据
     void sendData();            //发送串口数据
     void sendData(QString data);//发送串口数据带参数
-    void saveData();            //保存串口数据
+    void saveData();//保存串口数据
 
 private slots:
     void on_pushButton_OpenCom_clicked();
     void on_pushButton_ReceiveCnt_clicked();
     void on_pushButton_SendCnt_clicked();
-    void on_pushButton_DirSelect_clicked();
     void on_checkBox_AutoSendInTime_stateChanged(int arg1);
-    void on_checkBox_AutoSaveInTime_stateChanged(int arg1);
+    void on_checkBox_SaveInFile_stateChanged(int arg1);
+    void on_pushButton_ClearTxtMain_clicked();
 };
 #endif // FRMCOMTOOL_H

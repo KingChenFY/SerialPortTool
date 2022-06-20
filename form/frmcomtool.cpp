@@ -20,13 +20,13 @@ frmComTool::~frmComTool()
 void frmComTool::initForm()
 {
     isShow = true;
+    isSave = false;
     sleepTime = 10;
     sendCount = 0;
     receiveCount = 0;
 
     //主动关联的槽
     connect(ui->pushButton_Send, SIGNAL(clicked()), this, SLOT(sendData()));
-    connect(ui->pushButton_SaveInDir, SIGNAL(clicked()), this, SLOT(saveData()));
 
     //定时读取数据
     timerRead = new QTimer(this);
@@ -91,11 +91,8 @@ void frmComTool::initConfig()
 
     ui->lineEdit_AutoSendInTime->setText(QString::number(AppConfig::SendInterval));
     connect(ui->lineEdit_AutoSendInTime, SIGNAL(textChanged(QString)), this, SLOT(saveConfig()));
-    ui->lineEdit_AutoSaveInTime->setText(QString::number(AppConfig::SaveInterval));
-    connect(ui->lineEdit_AutoSaveInTime, SIGNAL(textChanged(QString)), this, SLOT(saveConfig()));
 
     timerSend->setInterval(AppConfig::SendInterval);
-    timerSave->setInterval(AppConfig::SaveInterval);
 }
 
 void frmComTool::saveConfig()
@@ -110,11 +107,6 @@ void frmComTool::saveConfig()
     if (sendInterval != AppConfig::SendInterval) {
         AppConfig::SendInterval = sendInterval;
         timerSend->setInterval(AppConfig::SendInterval);
-    }
-    int saveInterval = ui->lineEdit_AutoSaveInTime->text().toInt();
-    if (saveInterval != AppConfig::SaveInterval) {
-        AppConfig::SaveInterval = saveInterval;
-        timerSave->setInterval(AppConfig::SaveInterval);
     }
 
     AppConfig::writeConfig();
@@ -190,9 +182,9 @@ void frmComTool::readData()
 
     if (isShow) {
         QString buffer;
-        /*if (ui->ckHexReceive->isChecked()) {
+        if (ui->checkBox_HexReceive->isChecked()) {
             buffer = QUIHelperData::byteArrayToHexStr(data);
-        } else */{
+        } else {
             //buffer = QUIHelperData::byteArrayToAsciiStr(data);
             buffer = QString::fromLocal8Bit(data);
         }
@@ -211,6 +203,18 @@ void frmComTool::readData()
         append(1, buffer);
         receiveCount = receiveCount + data.size();
         ui->pushButton_ReceiveCnt->setText(QString("接收：%1 字节").arg(receiveCount));
+
+        if(isSave) {
+            QString fileName = ui->lineEdit_SaveDir->text();
+            QFile file(fileName);
+            file.open(QFile::WriteOnly | QIODevice::Append);
+            QTextStream out(&file);
+//            buffer = buffer.replace("\r", "");
+//            buffer = buffer.replace("\n", "");
+            QString strData = QString("T[%1],%2").arg(TIMEMS).arg(buffer);
+            out << strData << Qt::endl;
+            file.close();
+        }
 
         //启用网络转发则调用网络发送数据
 //        if (tcpOk) {
@@ -248,11 +252,11 @@ void frmComTool::sendData(QString data)
 //    }
 
     QByteArray buffer;
-//    if (ui->ckHexSend->isChecked()) {
-//        buffer = QUIHelperData::hexStrToByteArray(data);
-//    } else {
-//        buffer = QUIHelperData::asciiStrToByteArray(data);
-//    }
+    if (ui->checkBox_HexSend->isChecked()) {
+        buffer = QUIHelperData::hexStrToByteArray(data);
+    } else {
+        buffer = QUIHelperData::asciiStrToByteArray(data);
+    }
 
     com->write(buffer);
     append(0, data);
@@ -272,18 +276,18 @@ void frmComTool::saveData()
         return;
     }
 
-    QDateTime now = QDateTime::currentDateTime();
-    //QString name = now.toString("yyyy-MM-dd-HH-mm-ss");
-    QString name("123");
-    QString fileName = QString("%1/%2.txt").arg(ui->lineEdit_SaveDir->text()).arg(name);
+//    QDateTime now = QDateTime::currentDateTime();
+//    QString name = now.toString("yyyy-MM-dd-HH-mm-ss");
+//    QString fileName = QString("%1/%2.txt").arg(ui->lineEdit_SaveDir->text()).arg(name);
 
+    QString fileName = ui->lineEdit_SaveDir->text();
     QFile file(fileName);
-    file.open(QFile::WriteOnly | QIODevice::Text);
+    file.open(QFile::WriteOnly | QIODevice::Text | QIODevice::Append);
     QTextStream out(&file);
     out << tempData;
     file.close();
 
-    //on_btnClear_clicked();
+    on_pushButton_ClearTxtMain_clicked();
 }
 
 void frmComTool::on_pushButton_OpenCom_clicked()
@@ -319,6 +323,8 @@ void frmComTool::on_pushButton_OpenCom_clicked()
         ui->pushButton_OpenCom->setText("打开串口");
         //on_btnClear_clicked();
         comOk = false;
+        ui->checkBox_AutoSendInTime->setChecked(false);
+        emit on_checkBox_AutoSendInTime_stateChanged(0);
     }
 }
 
@@ -334,36 +340,39 @@ void frmComTool::on_pushButton_SendCnt_clicked()
     ui->pushButton_SendCnt->setText("发送：0 字节");
 }
 
-void frmComTool::on_pushButton_DirSelect_clicked()
-{
-    QString dir = QFileDialog::getExistingDirectory(this, "选择保存路径");
-    if (!dir.isEmpty()) {
-        ui->lineEdit_SaveDir->setText(dir);
-    }
-}
-
-
-
 void frmComTool::on_checkBox_AutoSendInTime_stateChanged(int arg1)
 {
     if (arg1 == 0) {
-        ui->lineEdit_AutoSendInTime->setEnabled(true);
         timerSend->stop();
+        ui->lineEdit_AutoSendInTime->setEnabled(true);
+        ui->comboBox_SendContent->setEnabled(true);
     } else {
         ui->lineEdit_AutoSendInTime->setEnabled(false);
+        ui->comboBox_SendContent->setEnabled(false);
         timerSend->start();
     }
 }
 
-
-void frmComTool::on_checkBox_AutoSaveInTime_stateChanged(int arg1)
+void frmComTool::on_checkBox_SaveInFile_stateChanged(int arg1)
 {
-    if (arg1 == 0) {
-        ui->lineEdit_AutoSaveInTime->setEnabled(true);
-        timerSave->stop();
-    } else {
-        ui->lineEdit_AutoSaveInTime->setEnabled(false);
-        timerSave->start();
+    if(0 == arg1)
+    {
+        isSave = false;
     }
+    else
+    {
+        QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Text files (*.txt)"));
+    //    QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Text files (*.txt);;XML files (*.xml)"));
+        if (!dir.isEmpty()) {
+            ui->lineEdit_SaveDir->setText(dir);
+            isSave = true;
+        }
+    }
+}
+
+
+void frmComTool::on_pushButton_ClearTxtMain_clicked()
+{
+    append(0, "", true);
 }
 
