@@ -16,6 +16,9 @@ public:
     frmComTool(QWidget *parent = nullptr);
     ~frmComTool();
 
+    //处理返回数据
+    static bool ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata);
+
 private:
     Ui::frmComTool *ui;
 
@@ -51,5 +54,6 @@ private slots:
     void on_checkBox_AutoSendInTime_stateChanged(int arg1);
     void on_checkBox_SaveInFile_stateChanged(int arg1);
     void on_pushButton_ClearTxtMain_clicked();
+    void on_pushButton_ReadTemp_clicked();
 };
 #endif // FRMCOMTOOL_H

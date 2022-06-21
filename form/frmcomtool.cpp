@@ -112,6 +112,23 @@ void frmComTool::saveConfig()
     AppConfig::writeConfig();
 }
 
+bool frmComTool::ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata)
+{
+    quint16 __crc_local, __crc_read;
+    if(rs68data.size() < 7)
+        return false;
+    __crc_local = QUIHelperData::getModbus16( (quint8*)rs68data.data(), (rs68data.size()-2) );
+    __crc_read = QUIHelperData::byteToUShortRec(rs68data.sliced(5, 2));
+
+    if( __crc_local == __crc_read )
+    {
+        slaveaddr = rs68data[0];
+        parsedata = rs68data.sliced(3, 2);
+        return true;
+    }
+    return false;
+}
+
 void frmComTool::append(int type, const QString &data, bool clear)
 {
     static int currentCount = 0;
@@ -200,20 +217,28 @@ void frmComTool::readData()
 //            }
 //        }
 
-        append(1, buffer);
-        receiveCount = receiveCount + data.size();
-        ui->pushButton_ReceiveCnt->setText(QString("接收：%1 字节").arg(receiveCount));
-
         if(isSave) {
             QString fileName = ui->lineEdit_SaveDir->text();
             QFile file(fileName);
             file.open(QFile::WriteOnly | QIODevice::Append);
             QTextStream out(&file);
-//            buffer = buffer.replace("\r", "");
-//            buffer = buffer.replace("\n", "");
             QString strData = QString("T[%1],%2").arg(TIMEMS).arg(buffer);
             out << strData << Qt::endl;
             file.close();
+        }
+
+        append(1, buffer);
+        receiveCount = receiveCount + data.size();
+        ui->pushButton_ReceiveCnt->setText(QString("接收：%1 字节").arg(receiveCount));
+
+        QByteArray __parsedata;
+        quint8 __slaveaddr;
+        if(ParseRS68RetrunData(data, __slaveaddr, __parsedata))
+        {
+            bool ok;
+            float temp = (float)(QUIHelperData::byteToUShort(__parsedata)) / 10;//__parsedata.toInt(&ok, 16);
+            QString string_temp = QString("%1").arg(temp);
+            ui->lineEdit_TempValue->setText(string_temp);
         }
 
         //启用网络转发则调用网络发送数据
@@ -374,5 +399,31 @@ void frmComTool::on_checkBox_SaveInFile_stateChanged(int arg1)
 void frmComTool::on_pushButton_ClearTxtMain_clicked()
 {
     append(0, "", true);
+}
+
+
+void frmComTool::on_pushButton_ReadTemp_clicked()
+{
+    QByteArray __read_buffer;
+    quint16 __crc_result;
+    QString __append_string;
+
+    //aim slave address
+    __read_buffer.append(ui->SpinBox_SendAddr->value());
+    //function code/command
+    __read_buffer.append(0x03);
+    //register address
+    __read_buffer.append(QUIHelperData::ushortToByte(0));
+    //read register nums
+    __read_buffer.append(QUIHelperData::ushortToByte(1));
+    //Modebus CRC Caculate
+    __crc_result = QUIHelperData::getModbus16( (quint8*)__read_buffer.data(), __read_buffer.size() );
+    __read_buffer.append(QUIHelperData::ushortToByteRec(__crc_result));
+
+    com->write(__read_buffer);
+    __append_string = QUIHelperData::byteArrayToHexStr(__read_buffer);
+    append(0, __append_string);
+    sendCount = sendCount + __read_buffer.size();
+    ui->pushButton_SendCnt->setText(QString("发送：%1 字节").arg(sendCount));
 }
 
