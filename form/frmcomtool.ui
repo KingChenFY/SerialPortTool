@@ -519,14 +519,14 @@
       </layout>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton">
+      <widget class="QPushButton" name="pushButton_ResetRsModule">
        <property name="text">
         <string>重启模块</string>
        </property>
       </widget>
      </item>
      <item>
-      <widget class="QPushButton" name="pushButton_2">
+      <widget class="QPushButton" name="pushButton_ResetConnectParam">
        <property name="text">
         <string>复位通讯参数</string>
        </property>

@@ -60,5 +60,8 @@ private slots:
     void on_pushButton_ClearTxtMain_clicked();
     void on_pushButton_ReadTemp_clicked();
     void on_pushButton_SlaveRead_clicked();
+    void on_pushButton_SlaveSet_clicked();
+    void on_pushButton_ResetRsModule_clicked();
+    void on_pushButton_ResetConnectParam_clicked();
 };
 #endif // FRMCOMTOOL_H

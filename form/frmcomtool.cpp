@@ -466,3 +466,73 @@ void frmComTool::on_pushButton_SlaveRead_clicked()
     sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
 }
 
+
+void frmComTool::on_pushButton_SlaveSet_clicked()
+{
+    QByteArray __write_buffer;
+    ushort data;
+
+    if(ui->radioButton_SlaveAddrNum->isChecked())
+    {
+        regAddr = 1;
+        data = ui->SpinBox_SlaveAddrNum->value();
+    }
+    else if(ui->radioButton_SlaveBaudRate->isChecked())
+    {
+        regAddr = 3;
+        data = ui->comboBox_SlaveBaudRate->currentIndex();
+    }
+    else if(ui->radioButton_SlaveParity->isChecked())
+    {
+        regAddr = 9;
+        data = ui->comboBox_SlaveParity->currentIndex();
+    }
+    else if(ui->radioButton_SlaveStopBits->isChecked())
+    {
+        regAddr = 8;
+        data = ui->comboBox_SlaveStopBits->currentIndex();
+    }
+    else
+    {
+        regAddr = 7;
+        data = ui->comboBox_SlaveSensorType->currentIndex();
+    }
+    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);
+    sendData(QUIHelperData::byteArrayToHexStr(__write_buffer));
+}
+
+
+void frmComTool::on_pushButton_ResetRsModule_clicked()
+{
+    QByteArray __write_buffer, __d_buffer;
+    ushort data;
+
+    regAddr = 37;
+
+    __d_buffer.clear();
+    __d_buffer.append(0x55);
+    __d_buffer.append(0xAA); ;
+    data = QUIHelperData::byteToUShort(__d_buffer);
+
+    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);
+    sendData(QUIHelperData::byteArrayToHexStr(__write_buffer));
+
+    emit on_pushButton_OpenCom_clicked();
+}
+
+void frmComTool::on_pushButton_ResetConnectParam_clicked()
+{
+    QByteArray __write_buffer, __d_buffer;
+    ushort data;
+
+    regAddr = 265;
+
+    __d_buffer.clear();
+    __d_buffer.append(0x12);
+    __d_buffer.append(0x34); ;
+    data = QUIHelperData::byteToUShort(__d_buffer);
+
+    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);
+    sendData(QUIHelperData::byteArrayToHexStr(__write_buffer));
+}
+
