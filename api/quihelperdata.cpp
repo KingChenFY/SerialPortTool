@@ -448,3 +448,37 @@ QString QUIHelperData::byteArrayToHexStr(const QByteArray &data)
 
     return temp.trimmed().toUpper();
 }
+
+bool QUIHelperData::ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata)
+{
+    quint16 __crc_local, __crc_read;
+    if(rs68data.size() < 7)
+        return false;
+    __crc_local = getModbus16( (quint8*)rs68data.data(), (rs68data.size()-2) );
+    __crc_read = byteToUShortRec(rs68data.sliced(5, 2));
+
+    if( __crc_local == __crc_read )
+    {
+        slaveaddr = rs68data[0];
+        parsedata = rs68data.sliced(3, 2);
+        return true;
+    }
+    return false;
+}
+
+void QUIHelperData::FormatRS68SendData(char slaveaddr, char cmd, ushort regaddr, ushort regnum, QByteArray &rs68data)
+{
+    quint16 __crc_result;
+    rs68data.clear();
+    //aim slave address
+    rs68data.append(slaveaddr);
+    //function code/command
+     rs68data.append(cmd);
+    //register address
+    rs68data.append( ushortToByte(regaddr) );
+    //read register nums
+    rs68data.append( ushortToByte(regnum) );
+    //Modebus CRC Caculate
+    __crc_result = getModbus16( (quint8*)rs68data.data(), rs68data.size() );
+    rs68data.append( ushortToByteRec(__crc_result) );
+}

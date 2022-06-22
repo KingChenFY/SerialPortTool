@@ -16,8 +16,10 @@ public:
     frmComTool(QWidget *parent = nullptr);
     ~frmComTool();
 
-    //处理返回数据
-    static bool ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata);
+//    //处理返回数据
+//    static bool ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata);
+//    //封装数据
+//    static void FormatRS68SendData(char slaveaddr, char cmd, ushort regaddr, ushort regnum, QByteArray &rs68data);
 
 private:
     Ui::frmComTool *ui;
@@ -25,6 +27,7 @@ private:
     bool isShow;                //是否显示数据
     bool isSave;                //是否保存
     int sleepTime;              //接收延时时间
+    ushort regAddr;             //当前获取的寄存器地址
 
     QextSerialPort *com;        //串口通信对象
     bool comOk;                 //串口是否打开
@@ -41,11 +44,12 @@ private slots:
     void initConfig();          //初始化配置文件
     void saveConfig();          //保存配置文件
     void append(int type, const QString &data, bool clear = false);
+    void RsModuleAppend(ushort regaddr, QByteArray prasedata);
 
-    void readData();            //读取串口数据
-    void sendData();            //发送串口数据
-    void sendData(QString data);//发送串口数据带参数
-    void saveData();//保存串口数据
+    void readData();                    //读取串口数据
+    void sendData();                    //发送串口数据
+    void sendData(QString data);        //发送串口数据带参数
+    void saveData(QString &tempData);   //保存串口数据
 
 private slots:
     void on_pushButton_OpenCom_clicked();
@@ -55,5 +59,6 @@ private slots:
     void on_checkBox_SaveInFile_stateChanged(int arg1);
     void on_pushButton_ClearTxtMain_clicked();
     void on_pushButton_ReadTemp_clicked();
+    void on_pushButton_SlaveRead_clicked();
 };
 #endif // FRMCOMTOOL_H

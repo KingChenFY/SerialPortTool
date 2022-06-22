@@ -342,7 +342,7 @@
     </rect>
    </property>
    <property name="title">
-    <string>从站配置</string>
+    <string>从站信息</string>
    </property>
    <widget class="QWidget" name="gridLayoutWidget_2">
     <property name="geometry">
@@ -358,64 +358,71 @@
       <number>6</number>
      </property>
      <item row="0" column="1">
-      <widget class="QSpinBox" name="SpinBox_SlaveAddrNum"/>
+      <widget class="QSpinBox" name="SpinBox_SlaveAddrNum">
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
      </item>
      <item row="2" column="1">
-      <widget class="QComboBox" name="comboBox_2"/>
+      <widget class="QComboBox" name="comboBox_SlaveParity"/>
      </item>
      <item row="1" column="1">
-      <widget class="QComboBox" name="comboBox"/>
+      <widget class="QComboBox" name="comboBox_SlaveBaudRate"/>
      </item>
      <item row="1" column="0">
-      <widget class="QRadioButton" name="radioButton_2">
+      <widget class="QRadioButton" name="radioButton_SlaveBaudRate">
        <property name="text">
         <string>波特率</string>
        </property>
       </widget>
      </item>
      <item row="4" column="0">
-      <widget class="QRadioButton" name="radioButton_5">
+      <widget class="QRadioButton" name="radioButton_SlaveSensorType">
        <property name="text">
         <string>传感器</string>
        </property>
       </widget>
      </item>
      <item row="4" column="1">
-      <widget class="QComboBox" name="comboBox_4"/>
+      <widget class="QComboBox" name="comboBox_SlaveSensorType"/>
      </item>
      <item row="0" column="0">
-      <widget class="QRadioButton" name="radioButton">
+      <widget class="QRadioButton" name="radioButton_SlaveAddrNum">
        <property name="text">
         <string>地址号</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
        </property>
       </widget>
      </item>
      <item row="3" column="0">
-      <widget class="QRadioButton" name="radioButton_4">
+      <widget class="QRadioButton" name="radioButton_SlaveStopBits">
        <property name="text">
         <string>停止位</string>
        </property>
       </widget>
      </item>
      <item row="2" column="0">
-      <widget class="QRadioButton" name="radioButton_3">
+      <widget class="QRadioButton" name="radioButton_SlaveParity">
        <property name="text">
         <string>校验位</string>
        </property>
       </widget>
      </item>
      <item row="3" column="1">
-      <widget class="QComboBox" name="comboBox_3"/>
+      <widget class="QComboBox" name="comboBox_SlaveStopBits"/>
      </item>
      <item row="5" column="0">
-      <widget class="QPushButton" name="pushButton_5">
+      <widget class="QPushButton" name="pushButton_SlaveRead">
        <property name="text">
         <string>读取</string>
        </property>
       </widget>
      </item>
      <item row="5" column="1">
-      <widget class="QPushButton" name="pushButton_6">
+      <widget class="QPushButton" name="pushButton_SlaveSet">
        <property name="text">
         <string>设置</string>
        </property>
@@ -436,7 +443,7 @@
    <property name="title">
     <string>实时温度</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>
@@ -478,7 +485,7 @@
    <property name="title">
     <string>模块配置</string>
    </property>
-   <widget class="QWidget" name="">
+   <widget class="QWidget" name="layoutWidget">
     <property name="geometry">
      <rect>
       <x>10</x>

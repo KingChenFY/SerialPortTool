@@ -24,6 +24,7 @@ void frmComTool::initForm()
     sleepTime = 10;
     sendCount = 0;
     receiveCount = 0;
+    regAddr = 0;
 
     //主动关联的槽
     connect(ui->pushButton_Send, SIGNAL(clicked()), this, SLOT(sendData()));
@@ -38,8 +39,8 @@ void frmComTool::initForm()
     connect(timerSend, SIGNAL(timeout()), this, SLOT(sendData()));
 
     //保存数据
-    timerSave = new QTimer(this);
-    connect(timerSave, SIGNAL(timeout()), this, SLOT(saveData()));
+//    timerSave = new QTimer(this);
+//    connect(timerSave, SIGNAL(timeout()), this, SLOT(saveData()));
 }
 
 void frmComTool::initConfig()
@@ -93,6 +94,23 @@ void frmComTool::initConfig()
     connect(ui->lineEdit_AutoSendInTime, SIGNAL(textChanged(QString)), this, SLOT(saveConfig()));
 
     timerSend->setInterval(AppConfig::SendInterval);
+
+    QStringList rsbaudList;
+    rsbaudList << "300" << "600" << "1200" << "2400" << "4800" << "9600" << "19200"
+               << "38400" << "43000" << "56000" << "57600" << "115200";
+    ui->comboBox_SlaveBaudRate->addItems(rsbaudList);
+    ui->comboBox_SlaveBaudRate->setCurrentIndex(ui->comboBox_SlaveBaudRate->findText(QString::number(9600)));
+
+    ui->comboBox_SlaveParity->addItems(parityList);
+    ui->comboBox_SlaveParity->setCurrentIndex(ui->comboBox_SlaveParity->findText("无"));
+
+    ui->comboBox_SlaveStopBits->addItems(stopBitsList);
+    ui->comboBox_SlaveStopBits->setCurrentIndex(ui->comboBox_SlaveStopBits->findText(QString::number(1)));
+
+    QStringList sensorList;
+    sensorList << "PT100" << "PT1000";
+    ui->comboBox_SlaveSensorType->addItems(sensorList);
+    ui->comboBox_SlaveSensorType->setCurrentIndex(ui->comboBox_SlaveSensorType->findText("PT100"));
 }
 
 void frmComTool::saveConfig()
@@ -110,23 +128,6 @@ void frmComTool::saveConfig()
     }
 
     AppConfig::writeConfig();
-}
-
-bool frmComTool::ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata)
-{
-    quint16 __crc_local, __crc_read;
-    if(rs68data.size() < 7)
-        return false;
-    __crc_local = QUIHelperData::getModbus16( (quint8*)rs68data.data(), (rs68data.size()-2) );
-    __crc_read = QUIHelperData::byteToUShortRec(rs68data.sliced(5, 2));
-
-    if( __crc_local == __crc_read )
-    {
-        slaveaddr = rs68data[0];
-        parsedata = rs68data.sliced(3, 2);
-        return true;
-    }
-    return false;
 }
 
 void frmComTool::append(int type, const QString &data, bool clear)
@@ -184,6 +185,39 @@ void frmComTool::append(int type, const QString &data, bool clear)
     currentCount++;
 }
 
+void frmComTool::RsModuleAppend(ushort regaddr, QByteArray prasedata)
+{
+    int data = QUIHelperData::byteToUShort(prasedata);
+    ui->SpinBox_SlaveAddrNum->setValue(regaddr);
+
+    if(0 == regAddr)
+    {
+        float tValue = data / 10.0;
+        QString stValue = QString("%1").arg(tValue);
+        ui->lineEdit_TempValue->setText(stValue);
+    }
+    else if(1 == regAddr)
+    {
+        ui->SpinBox_SlaveAddrNum->setValue(data);
+    }
+    else if(3 == regAddr)
+    {
+        ui->comboBox_SlaveBaudRate->setCurrentIndex(data);
+    }
+    else if(9 == regAddr)
+    {
+        ui->comboBox_SlaveParity->setCurrentIndex(data);
+    }
+    else if(8 == regAddr)
+    {
+        ui->comboBox_SlaveStopBits->setCurrentIndex(data);
+    }
+    else if(7 == regAddr)
+    {
+        ui->comboBox_SlaveSensorType->setCurrentIndex(data);
+    }
+}
+
 void frmComTool::readData()
 {
     if (com->bytesAvailable() <= 0) {
@@ -199,6 +233,9 @@ void frmComTool::readData()
 
     if (isShow) {
         QString buffer;
+        QByteArray __parsedata;
+        quint8 __slaveaddr;
+
         if (ui->checkBox_HexReceive->isChecked()) {
             buffer = QUIHelperData::byteArrayToHexStr(data);
         } else {
@@ -218,27 +255,16 @@ void frmComTool::readData()
 //        }
 
         if(isSave) {
-            QString fileName = ui->lineEdit_SaveDir->text();
-            QFile file(fileName);
-            file.open(QFile::WriteOnly | QIODevice::Append);
-            QTextStream out(&file);
-            QString strData = QString("T[%1],%2").arg(TIMEMS).arg(buffer);
-            out << strData << Qt::endl;
-            file.close();
+            saveData(buffer);
         }
 
         append(1, buffer);
         receiveCount = receiveCount + data.size();
         ui->pushButton_ReceiveCnt->setText(QString("接收：%1 字节").arg(receiveCount));
 
-        QByteArray __parsedata;
-        quint8 __slaveaddr;
-        if(ParseRS68RetrunData(data, __slaveaddr, __parsedata))
+        if(QUIHelperData::ParseRS68RetrunData(data, __slaveaddr, __parsedata))
         {
-            bool ok;
-            float temp = (float)(QUIHelperData::byteToUShort(__parsedata)) / 10;//__parsedata.toInt(&ok, 16);
-            QString string_temp = QString("%1").arg(temp);
-            ui->lineEdit_TempValue->setText(string_temp);
+            RsModuleAppend(__slaveaddr, __parsedata);
         }
 
         //启用网络转发则调用网络发送数据
@@ -267,6 +293,7 @@ void frmComTool::sendData()
 
 void frmComTool::sendData(QString data)
 {
+    if(!comOk) return;
     if (com == 0 || !com->isOpen()) {
         return;
     }
@@ -289,18 +316,15 @@ void frmComTool::sendData(QString data)
     ui->pushButton_SendCnt->setText(QString("发送：%1 字节").arg(sendCount));
 }
 
-void frmComTool::saveData()
+void frmComTool::saveData(QString &tempData)
 {
-    QString tempData = ui->txtMain->toPlainText();
-
-    if (tempData == "") {
-        return;
-    }
-
+//    QString tempData = ui->txtMain->toPlainText();
+//    if (tempData == "") {
+//        return;
+//    }
     if (ui->lineEdit_SaveDir->text().isEmpty()) {
         return;
     }
-
 //    QDateTime now = QDateTime::currentDateTime();
 //    QString name = now.toString("yyyy-MM-dd-HH-mm-ss");
 //    QString fileName = QString("%1/%2.txt").arg(ui->lineEdit_SaveDir->text()).arg(name);
@@ -309,10 +333,11 @@ void frmComTool::saveData()
     QFile file(fileName);
     file.open(QFile::WriteOnly | QIODevice::Text | QIODevice::Append);
     QTextStream out(&file);
-    out << tempData;
+    QString strData = QString("T[%1],%2").arg(TIMEMS).arg(tempData);
+    out << strData << Qt::endl;
     file.close();
 
-    on_pushButton_ClearTxtMain_clicked();
+//    on_pushButton_ClearTxtMain_clicked();
 }
 
 void frmComTool::on_pushButton_OpenCom_clicked()
@@ -405,25 +430,39 @@ void frmComTool::on_pushButton_ClearTxtMain_clicked()
 void frmComTool::on_pushButton_ReadTemp_clicked()
 {
     QByteArray __read_buffer;
-    quint16 __crc_result;
-    QString __append_string;
 
-    //aim slave address
-    __read_buffer.append(ui->SpinBox_SendAddr->value());
-    //function code/command
-    __read_buffer.append(0x03);
-    //register address
-    __read_buffer.append(QUIHelperData::ushortToByte(0));
-    //read register nums
-    __read_buffer.append(QUIHelperData::ushortToByte(1));
-    //Modebus CRC Caculate
-    __crc_result = QUIHelperData::getModbus16( (quint8*)__read_buffer.data(), __read_buffer.size() );
-    __read_buffer.append(QUIHelperData::ushortToByteRec(__crc_result));
+    regAddr = 0;
+    ui->lineEdit_TempValue->clear();
+    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x03, regAddr, 1, __read_buffer);
+    sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
+}
 
-    com->write(__read_buffer);
-    __append_string = QUIHelperData::byteArrayToHexStr(__read_buffer);
-    append(0, __append_string);
-    sendCount = sendCount + __read_buffer.size();
-    ui->pushButton_SendCnt->setText(QString("发送：%1 字节").arg(sendCount));
+
+void frmComTool::on_pushButton_SlaveRead_clicked()
+{
+    QByteArray __read_buffer;
+
+    if(ui->radioButton_SlaveAddrNum->isChecked())
+    {
+        regAddr = 1;
+    }
+    else if(ui->radioButton_SlaveBaudRate->isChecked())
+    {
+        regAddr = 3;
+    }
+    else if(ui->radioButton_SlaveParity->isChecked())
+    {
+        regAddr = 9;
+    }
+    else if(ui->radioButton_SlaveStopBits->isChecked())
+    {
+        regAddr = 8;
+    }
+    else
+    {
+        regAddr = 7;
+    }
+    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x03, regAddr, 1, __read_buffer);
+    sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
 }
 

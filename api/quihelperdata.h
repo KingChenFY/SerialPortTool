@@ -65,6 +65,10 @@ public:
     static char hexStrToChar(char data);
     static QByteArray hexStrToByteArray(const QString &data);
     static QString byteArrayToHexStr(const QByteArray &data);
+
+    //RS68Module
+    static bool ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata);
+    static void FormatRS68SendData(char slaveaddr, char cmd, ushort regaddr, ushort regnum, QByteArray &rs68data);
 };
 
 #endif // QUIHELPERDATA_H
