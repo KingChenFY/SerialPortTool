@@ -4,6 +4,8 @@
 #include "quihelper.h"
 #include "quihelperdata.h"
 
+#include <QDebug>
+
 frmComTool::frmComTool(QWidget *parent) : QWidget(parent), ui(new Ui::frmComTool)
 {
     ui->setupUi(this);
@@ -44,6 +46,10 @@ void frmComTool::initForm()
 
 void frmComTool::initConfig()
 {
+    QList<QSerialPortInfo> portList = QSerialPortInfo::availablePorts();
+    qDebug() << "portName: " <<portList.at(0).portName();
+    qDebug() << "portDescription: " <<portList.at(0).description();
+
     QStringList comList;
     for (int i = 1; i <= 20; i++) {
         comList << QString("COM%1").arg(i);
