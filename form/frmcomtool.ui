@@ -342,7 +342,7 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>0</number>
+    <number>1</number>
    </property>
    <widget class="QWidget" name="tab_RS68Module">
     <attribute name="title">
@@ -552,9 +552,9 @@
      </widget>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_2">
+   <widget class="QWidget" name="tab_DamPt02">
     <attribute name="title">
-     <string>Tab 2</string>
+     <string>PT02</string>
     </attribute>
    </widget>
   </widget>
