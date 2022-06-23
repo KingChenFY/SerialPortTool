@@ -1,5 +1,7 @@
 #include "frmcomtool.h"
 #include "ui_frmcomtool.h"
+#include <QMessageBox>
+#include <QDebug>
 
 #include "quihelper.h"
 #include "quihelperdata.h"
@@ -396,10 +398,29 @@ void frmComTool::on_checkBox_AutoSendInTime_stateChanged(int arg1)
         timerSend->stop();
         ui->lineEdit_AutoSendInTime->setEnabled(true);
         ui->comboBox_SendContent->setEnabled(true);
+        ui->tab_RS68Module->setEnabled(true);
     } else {
-        ui->lineEdit_AutoSendInTime->setEnabled(false);
-        ui->comboBox_SendContent->setEnabled(false);
-        timerSend->start();
+        if(ui->lineEdit_AutoSendInTime->text().toUInt() < 200)
+        {
+            QMessageBox::warning(this, tr("Warning"), tr("发送间隔需要大于200毫秒！"), QMessageBox::Abort);
+            ui->checkBox_AutoSendInTime->setChecked(false);
+            ui->checkBox_AutoSendInTime->setCheckState(Qt::Unchecked);
+            return;
+        }
+        else if(ui->comboBox_SendContent->currentText().isEmpty())
+        {
+            QMessageBox::information(this, tr("Hint"), tr("发送内容为空！"), QMessageBox::Ok);
+            ui->checkBox_AutoSendInTime->setChecked(false);
+            ui->checkBox_AutoSendInTime->setCheckState(Qt::Unchecked);
+            return;
+        }
+        else
+        {
+            ui->tab_RS68Module->setEnabled(false);
+            ui->lineEdit_AutoSendInTime->setEnabled(false);
+            ui->comboBox_SendContent->setEnabled(false);
+            timerSend->start();
+        }
     }
 }
 
