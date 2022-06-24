@@ -398,7 +398,7 @@ void frmComTool::on_checkBox_AutoSendInTime_stateChanged(int arg1)
         timerSend->stop();
         ui->lineEdit_AutoSendInTime->setEnabled(true);
         ui->comboBox_SendContent->setEnabled(true);
-        ui->tab_RS68Module->setEnabled(true);
+        ui->frame_dampt02->setEnabled(true);
     } else {
         if(ui->lineEdit_AutoSendInTime->text().toUInt() < 200)
         {
@@ -416,7 +416,7 @@ void frmComTool::on_checkBox_AutoSendInTime_stateChanged(int arg1)
         }
         else
         {
-            ui->tab_RS68Module->setEnabled(false);
+            ui->frame_dampt02->setEnabled(false);
             ui->lineEdit_AutoSendInTime->setEnabled(false);
             ui->comboBox_SendContent->setEnabled(false);
             timerSend->start();
@@ -550,7 +550,7 @@ void frmComTool::on_pushButton_ResetConnectParam_clicked()
 
     __d_buffer.clear();
     __d_buffer.append(0x12);
-    __d_buffer.append(0x34); ;
+    __d_buffer.append(0x34);
     data = QUIHelperData::byteToUShort(__d_buffer);
 
     QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);

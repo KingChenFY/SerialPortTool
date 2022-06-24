@@ -332,230 +332,244 @@
     </layout>
    </widget>
   </widget>
-  <widget class="QTabWidget" name="tabWidget">
+  <widget class="QFrame" name="frame_dampt02">
    <property name="geometry">
     <rect>
      <x>200</x>
-     <y>340</y>
+     <y>350</y>
      <width>591</width>
-     <height>251</height>
+     <height>221</height>
     </rect>
    </property>
-   <property name="currentIndex">
-    <number>1</number>
+   <property name="frameShape">
+    <enum>QFrame::Box</enum>
    </property>
-   <widget class="QWidget" name="tab_RS68Module">
-    <attribute name="title">
-     <string>RS68Module</string>
-    </attribute>
-    <widget class="QGroupBox" name="groupBox_Temp">
+   <property name="frameShadow">
+    <enum>QFrame::Sunken</enum>
+   </property>
+   <property name="lineWidth">
+    <number>2</number>
+   </property>
+   <property name="midLineWidth">
+    <number>2</number>
+   </property>
+   <widget class="QGroupBox" name="groupBox_Temp">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>181</width>
+      <height>151</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>实时温度</string>
+    </property>
+    <widget class="QWidget" name="gridLayoutWidget_3">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>10</y>
-       <width>181</width>
-       <height>61</height>
+       <y>30</y>
+       <width>160</width>
+       <height>107</height>
       </rect>
      </property>
-     <property name="title">
-      <string>实时温度</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>161</width>
-        <height>26</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,1">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_TempValue">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_ReadTemp">
-         <property name="text">
-          <string>读取</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>181</width>
-       <height>131</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>模块配置</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget_1">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>161</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QFormLayout" name="formLayout">
-         <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="Label_SendAddr">
-           <property name="text">
-            <string>目标地址</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="SpinBox_SendAddr"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_ResetRsModule">
-         <property name="text">
-          <string>重启模块</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_ResetConnectParam">
-         <property name="text">
-          <string>复位通讯参数</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox">
-     <property name="geometry">
-      <rect>
-       <x>200</x>
-       <y>10</y>
-       <width>191</width>
-       <height>201</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>从站信息</string>
-     </property>
-     <widget class="QWidget" name="gridLayoutWidget_2">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>171</width>
-        <height>165</height>
-       </rect>
-      </property>
-      <layout class="QGridLayout" name="gridLayout_2">
-       <property name="spacing">
-        <number>6</number>
-       </property>
-       <item row="0" column="1">
-        <widget class="QSpinBox" name="SpinBox_SlaveAddrNum">
-         <property name="value">
-          <number>1</number>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="1">
-        <widget class="QComboBox" name="comboBox_SlaveParity"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="QComboBox" name="comboBox_SlaveBaudRate"/>
-       </item>
-       <item row="1" column="0">
-        <widget class="QRadioButton" name="radioButton_SlaveBaudRate">
-         <property name="text">
-          <string>波特率</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="0">
-        <widget class="QRadioButton" name="radioButton_SlaveSensorType">
-         <property name="text">
-          <string>传感器</string>
-         </property>
-        </widget>
-       </item>
-       <item row="4" column="1">
-        <widget class="QComboBox" name="comboBox_SlaveSensorType"/>
-       </item>
-       <item row="0" column="0">
-        <widget class="QRadioButton" name="radioButton_SlaveAddrNum">
-         <property name="text">
-          <string>地址号</string>
-         </property>
-         <property name="checked">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="0">
-        <widget class="QRadioButton" name="radioButton_SlaveStopBits">
-         <property name="text">
-          <string>停止位</string>
-         </property>
-        </widget>
-       </item>
-       <item row="2" column="0">
-        <widget class="QRadioButton" name="radioButton_SlaveParity">
-         <property name="text">
-          <string>校验位</string>
-         </property>
-        </widget>
-       </item>
-       <item row="3" column="1">
-        <widget class="QComboBox" name="comboBox_SlaveStopBits"/>
-       </item>
-       <item row="5" column="0">
-        <widget class="QPushButton" name="pushButton_SlaveRead">
-         <property name="text">
-          <string>读取</string>
-         </property>
-        </widget>
-       </item>
-       <item row="5" column="1">
-        <widget class="QPushButton" name="pushButton_SlaveSet">
-         <property name="text">
-          <string>设置</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
+     <layout class="QGridLayout" name="gridLayout_3">
+      <item row="0" column="0">
+       <widget class="QLineEdit" name="lineEdit_TempValue">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QLineEdit" name="lineEdit_5"/>
+      </item>
+      <item row="2" column="0">
+       <widget class="QLineEdit" name="lineEdit_4"/>
+      </item>
+      <item row="0" column="1">
+       <widget class="QLineEdit" name="lineEdit"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QLineEdit" name="lineEdit_2"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QLineEdit" name="lineEdit_3"/>
+      </item>
+      <item row="3" column="0">
+       <widget class="QLineEdit" name="lineEdit_6"/>
+      </item>
+      <item row="3" column="1">
+       <widget class="QPushButton" name="pushButton_ReadTemp">
+        <property name="text">
+         <string>读取</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
     </widget>
    </widget>
-   <widget class="QWidget" name="tab_DamPt02">
-    <attribute name="title">
-     <string>PT02</string>
-    </attribute>
+   <widget class="QGroupBox" name="groupBox_3">
+    <property name="geometry">
+     <rect>
+      <x>400</x>
+      <y>10</y>
+      <width>181</width>
+      <height>131</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>模块配置</string>
+    </property>
+    <widget class="QWidget" name="layoutWidget_1">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>161</width>
+       <height>91</height>
+      </rect>
+     </property>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <property name="spacing">
+       <number>2</number>
+      </property>
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <layout class="QFormLayout" name="formLayout">
+        <property name="formAlignment">
+         <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+        </property>
+        <item row="0" column="0">
+         <widget class="QLabel" name="Label_SendAddr">
+          <property name="text">
+           <string>目标地址</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="SpinBox_SendAddr"/>
+        </item>
+       </layout>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_ResetRsModule">
+        <property name="text">
+         <string>重启模块</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="pushButton_ResetConnectParam">
+        <property name="text">
+         <string>复位通讯参数</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </widget>
+   <widget class="QGroupBox" name="groupBox">
+    <property name="geometry">
+     <rect>
+      <x>200</x>
+      <y>10</y>
+      <width>191</width>
+      <height>201</height>
+     </rect>
+    </property>
+    <property name="title">
+     <string>从站信息</string>
+    </property>
+    <widget class="QWidget" name="gridLayoutWidget_2">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>30</y>
+       <width>171</width>
+       <height>165</height>
+      </rect>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="SpinBox_SlaveAddrNum">
+        <property name="value">
+         <number>1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="1">
+       <widget class="QComboBox" name="comboBox_SlaveParity"/>
+      </item>
+      <item row="1" column="1">
+       <widget class="QComboBox" name="comboBox_SlaveBaudRate"/>
+      </item>
+      <item row="1" column="0">
+       <widget class="QRadioButton" name="radioButton_SlaveBaudRate">
+        <property name="text">
+         <string>波特率</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QRadioButton" name="radioButton_SlaveSensorType">
+        <property name="text">
+         <string>传感器</string>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="1">
+       <widget class="QComboBox" name="comboBox_SlaveSensorType"/>
+      </item>
+      <item row="0" column="0">
+       <widget class="QRadioButton" name="radioButton_SlaveAddrNum">
+        <property name="text">
+         <string>地址号</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="0">
+       <widget class="QRadioButton" name="radioButton_SlaveStopBits">
+        <property name="text">
+         <string>停止位</string>
+        </property>
+       </widget>
+      </item>
+      <item row="2" column="0">
+       <widget class="QRadioButton" name="radioButton_SlaveParity">
+        <property name="text">
+         <string>校验位</string>
+        </property>
+       </widget>
+      </item>
+      <item row="3" column="1">
+       <widget class="QComboBox" name="comboBox_SlaveStopBits"/>
+      </item>
+      <item row="5" column="0">
+       <widget class="QPushButton" name="pushButton_SlaveRead">
+        <property name="text">
+         <string>读取</string>
+        </property>
+       </widget>
+      </item>
+      <item row="5" column="1">
+       <widget class="QPushButton" name="pushButton_SlaveSet">
+        <property name="text">
+         <string>设置</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
    </widget>
   </widget>
  </widget>
