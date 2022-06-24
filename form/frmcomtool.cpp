@@ -191,25 +191,23 @@ void frmComTool::append(int type, const QString &data, bool clear)
 void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prasedata)
 {
     ushort regnum =bytenum/2;
-    int data[64];
+    int data[64] = {0};
     //data.resize(regnum);
+    float tValue1, tValue2;
 
     for (int i = 0; i < regnum; i += 1) {
         data[i] = QUIHelperData::byteToUShort(prasedata.sliced(i*2, 2));
     }
     ui->SpinBox_SlaveAddrNum->setValue(regaddr);
 
+    tValue1 = data[0] / 100.0;
+    tValue2 = data[1] / 100.0;
     if(0 == regAddr)
     {
         if(sensornum < 2)
         {
-            float tValue = data[0] / 100.0;
-            QString stValue = QString("%1").arg(tValue);
-            ui->lineEdit_TempValue_1->setText(stValue);
-
-            tValue = data[1] / 100.0;
-            stValue = QString("%1").arg(tValue);
-            ui->lineEdit_TempValue_2->setText(stValue);
+            ui->lineEdit_TempValue_1->setText(QString("%1").arg(tValue1));
+            ui->lineEdit_TempValue_2->setText(QString("%1").arg(tValue2));
 
             sensornum++;
             ui->SpinBox_SendAddr->setValue(sensornum);
@@ -217,13 +215,8 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
         }
         else
         {
-            float tValue = data[0] / 100.0;
-            QString stValue = QString("%1").arg(tValue);
-            ui->lineEdit_TempValue_3->setText(stValue);
-
-            tValue = data[1] / 100.0;
-            stValue = QString("%1").arg(tValue);
-            ui->lineEdit_TempValue_4->setText(stValue);
+            ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
+            ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
 
             sensornum = 1;
             ui->SpinBox_SendAddr->setValue(sensornum);

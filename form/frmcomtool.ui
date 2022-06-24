@@ -351,7 +351,7 @@
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
-       <x>370</x>
+       <x>390</x>
        <y>10</y>
        <width>191</width>
        <height>201</height>
@@ -450,7 +450,7 @@
     <widget class="QGroupBox" name="groupBox_3">
      <property name="geometry">
       <rect>
-       <x>180</x>
+       <x>200</x>
        <y>10</y>
        <width>181</width>
        <height>131</height>
@@ -518,40 +518,49 @@
       <rect>
        <x>10</x>
        <y>10</y>
-       <width>151</width>
-       <height>171</height>
+       <width>181</width>
+       <height>151</height>
       </rect>
      </property>
      <property name="title">
       <string>实时温度</string>
      </property>
-     <widget class="QWidget" name="verticalLayoutWidget_3">
+     <widget class="QWidget" name="gridLayoutWidget_3">
       <property name="geometry">
        <rect>
         <x>10</x>
         <y>30</y>
-        <width>131</width>
-        <height>134</height>
+        <width>160</width>
+        <height>107</height>
        </rect>
       </property>
-      <layout class="QVBoxLayout" name="verticalLayout_4">
-       <item>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <item row="3" column="0">
+        <widget class="QLineEdit" name="lineEdit_TempValue_4"/>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLineEdit" name="lineEdit_TempValue_2"/>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLineEdit" name="lineEdit_TempValue_3"/>
+       </item>
+       <item row="0" column="0">
         <widget class="QLineEdit" name="lineEdit_TempValue_1">
          <property name="readOnly">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_TempValue_2"/>
+       <item row="0" column="1">
+        <widget class="QLineEdit" name="lineEdit"/>
        </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_TempValue_3"/>
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEdit_2"/>
        </item>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_TempValue_4"/>
+       <item row="2" column="1">
+        <widget class="QLineEdit" name="lineEdit_3"/>
        </item>
-       <item>
+       <item row="3" column="1">
         <widget class="QPushButton" name="pushButton_ReadTemp">
          <property name="text">
           <string>读取</string>
