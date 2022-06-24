@@ -39,7 +39,8 @@ void frmComTool::initForm()
 
     //发送数据
     timerSend = new QTimer(this);
-    connect(timerSend, SIGNAL(timeout()), this, SLOT(sendData()));
+    //connect(timerSend, SIGNAL(timeout()), this, SLOT(sendData()));
+    connect(timerSend, SIGNAL(timeout()), this, SLOT(on_pushButton_ReadTemp_clicked()));
 
     //保存数据
 //    timerSave = new QTimer(this);
@@ -192,8 +193,8 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
 {
     ushort regnum =bytenum/2;
     int data[64] = {0};
-    //data.resize(regnum);
     float tValue1, tValue2;
+    QString sValue;
 
     for (int i = 0; i < regnum; i += 1) {
         data[i] = QUIHelperData::byteToUShort(prasedata.sliced(i*2, 2));
@@ -204,20 +205,45 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
     tValue2 = data[1] / 100.0;
     if(0 == regAddr)
     {
-        if(sensornum < 2)
+        if(sensornum < ui->spinBox_pt02num->value())
         {
-            ui->lineEdit_TempValue_1->setText(QString("%1").arg(tValue1));
-            ui->lineEdit_TempValue_2->setText(QString("%1").arg(tValue2));
+            if(1 == sensornum)
+            {
+                ui->lineEdit_TempValue_1->setText(QString("%1").arg(tValue1));
+                ui->lineEdit_TempValue_2->setText(QString("%1").arg(tValue2));
+                 sValue = QString("1, %1, 2, %2").arg(tValue1).arg(tValue2);
+            }
+            else
+            {
+                ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
+                ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
+                sValue = QString("3, %1, 4, %2").arg(tValue1).arg(tValue2);
+            }
 
+            if(isSave) {
+                saveData(sValue);
+            }
             sensornum++;
             ui->SpinBox_SendAddr->setValue(sensornum);
             on_pushButton_ReadTemp_clicked();
         }
         else
         {
-            ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
-            ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
-
+            if(2 == sensornum)
+            {
+                ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
+                ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
+                sValue = QString("3, %1, 4, %2").arg(tValue1).arg(tValue2);
+            }
+            else
+            {
+                ui->lineEdit_TempValue_5->setText(QString("%1").arg(tValue1));
+                ui->lineEdit_TempValue_6->setText(QString("%1").arg(tValue2));
+                sValue = QString("5, %1, 6, %2").arg(tValue1).arg(tValue2);
+            }
+            if(isSave) {
+                saveData(sValue);
+            }
             sensornum = 1;
             ui->SpinBox_SendAddr->setValue(sensornum);
         }
@@ -281,9 +307,9 @@ void frmComTool::readData()
 //            }
 //        }
 
-        if(isSave) {
-            saveData(buffer);
-        }
+//        if(isSave) {
+//            saveData(buffer);
+//        }
 
         append(1, buffer);
         receiveCount = receiveCount + data.size();
@@ -425,20 +451,20 @@ void frmComTool::on_checkBox_AutoSendInTime_stateChanged(int arg1)
         ui->comboBox_SendContent->setEnabled(true);
         ui->tab_RS68Module->setEnabled(true);
     } else {
-        if(ui->lineEdit_AutoSendInTime->text().toUInt() < 200)
+        if(ui->lineEdit_AutoSendInTime->text().toUInt() < 1000)
         {
-            QMessageBox::warning(this, tr("Warning"), tr("发送间隔需要大于200毫秒！"), QMessageBox::Abort);
+            QMessageBox::warning(this, tr("Warning"), tr("发送间隔需要大于1秒！"), QMessageBox::Abort);
             ui->checkBox_AutoSendInTime->setChecked(false);
             ui->checkBox_AutoSendInTime->setCheckState(Qt::Unchecked);
             return;
         }
-        else if(ui->comboBox_SendContent->currentText().isEmpty())
-        {
-            QMessageBox::information(this, tr("Hint"), tr("发送内容为空！"), QMessageBox::Ok);
-            ui->checkBox_AutoSendInTime->setChecked(false);
-            ui->checkBox_AutoSendInTime->setCheckState(Qt::Unchecked);
-            return;
-        }
+//        else if(ui->comboBox_SendContent->currentText().isEmpty())
+//        {
+//            QMessageBox::information(this, tr("Hint"), tr("发送内容为空！"), QMessageBox::Ok);
+//            ui->checkBox_AutoSendInTime->setChecked(false);
+//            ui->checkBox_AutoSendInTime->setCheckState(Qt::Unchecked);
+//            return;
+//        }
         else
         {
             ui->tab_RS68Module->setEnabled(false);
@@ -483,10 +509,15 @@ void frmComTool::on_pushButton_ReadTemp_clicked()
         ui->lineEdit_TempValue_1->clear();
         ui->lineEdit_TempValue_2->clear();
     }
-    else
+    else if(2 == ui->SpinBox_SendAddr->value())
     {
         ui->lineEdit_TempValue_3->clear();
         ui->lineEdit_TempValue_4->clear();
+    }
+    else
+    {
+        ui->lineEdit_TempValue_5->clear();
+        ui->lineEdit_TempValue_6->clear();
     }
     QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x04, regAddr, 2, __read_buffer);
     sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));

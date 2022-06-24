@@ -519,7 +519,7 @@
        <x>10</x>
        <y>10</y>
        <width>181</width>
-       <height>151</height>
+       <height>171</height>
       </rect>
      </property>
      <property name="title">
@@ -531,39 +531,56 @@
         <x>10</x>
         <y>30</y>
         <width>160</width>
-        <height>107</height>
+        <height>134</height>
        </rect>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="3" column="0">
-        <widget class="QLineEdit" name="lineEdit_TempValue_4"/>
-       </item>
-       <item row="1" column="0">
+       <item row="2" column="0">
         <widget class="QLineEdit" name="lineEdit_TempValue_2"/>
        </item>
-       <item row="2" column="0">
+       <item row="3" column="0">
         <widget class="QLineEdit" name="lineEdit_TempValue_3"/>
        </item>
-       <item row="0" column="0">
+       <item row="1" column="1">
+        <widget class="QLineEdit" name="lineEdit_TempValue_5"/>
+       </item>
+       <item row="1" column="0">
         <widget class="QLineEdit" name="lineEdit_TempValue_1">
          <property name="readOnly">
           <bool>true</bool>
          </property>
         </widget>
        </item>
-       <item row="0" column="1">
-        <widget class="QLineEdit" name="lineEdit"/>
-       </item>
-       <item row="1" column="1">
-        <widget class="QLineEdit" name="lineEdit_2"/>
+       <item row="4" column="0">
+        <widget class="QLineEdit" name="lineEdit_TempValue_4"/>
        </item>
        <item row="2" column="1">
-        <widget class="QLineEdit" name="lineEdit_3"/>
+        <widget class="QLineEdit" name="lineEdit_TempValue_6"/>
        </item>
        <item row="3" column="1">
+        <widget class="QLineEdit" name="lineEdit_TempValue_7"/>
+       </item>
+       <item row="4" column="1">
         <widget class="QPushButton" name="pushButton_ReadTemp">
          <property name="text">
           <string>读取</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="label_pt02num">
+         <property name="text">
+          <string>PT02数量 ：</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QSpinBox" name="spinBox_pt02num">
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>3</number>
          </property>
         </widget>
        </item>
