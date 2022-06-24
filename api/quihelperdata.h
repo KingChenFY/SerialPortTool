@@ -67,7 +67,7 @@ public:
     static QString byteArrayToHexStr(const QByteArray &data);
 
     //RS68Module
-    static bool ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata);
+    static bool ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, quint8 &regnum, QByteArray &parsedata);
     static void FormatRS68SendData(char slaveaddr, char cmd, ushort regaddr, ushort regnum, QByteArray &rs68data);
 };
 

@@ -28,6 +28,7 @@ private:
     bool isSave;                //是否保存
     int sleepTime;              //接收延时时间
     ushort regAddr;             //当前获取的寄存器地址
+    quint8 sensornum;
 
     QextSerialPort *com;        //串口通信对象
     bool comOk;                 //串口是否打开
@@ -44,7 +45,7 @@ private slots:
     void initConfig();          //初始化配置文件
     void saveConfig();          //保存配置文件
     void append(int type, const QString &data, bool clear = false);
-    void RsModuleAppend(ushort regaddr, QByteArray prasedata);
+    void RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prasedata);
 
     void readData();                    //读取串口数据
     void sendData();                    //发送串口数据

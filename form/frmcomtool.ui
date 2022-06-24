@@ -342,120 +342,16 @@
     </rect>
    </property>
    <property name="currentIndex">
-    <number>1</number>
+    <number>0</number>
    </property>
    <widget class="QWidget" name="tab_RS68Module">
     <attribute name="title">
-     <string>RS68Module</string>
+     <string>PT02</string>
     </attribute>
-    <widget class="QGroupBox" name="groupBox_Temp">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>10</y>
-       <width>181</width>
-       <height>61</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>实时温度</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>161</width>
-        <height>26</height>
-       </rect>
-      </property>
-      <layout class="QHBoxLayout" name="horizontalLayout_6" stretch="2,1">
-       <property name="sizeConstraint">
-        <enum>QLayout::SetDefaultConstraint</enum>
-       </property>
-       <item>
-        <widget class="QLineEdit" name="lineEdit_TempValue">
-         <property name="readOnly">
-          <bool>true</bool>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_ReadTemp">
-         <property name="text">
-          <string>读取</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
-    <widget class="QGroupBox" name="groupBox_3">
-     <property name="geometry">
-      <rect>
-       <x>10</x>
-       <y>80</y>
-       <width>181</width>
-       <height>131</height>
-      </rect>
-     </property>
-     <property name="title">
-      <string>模块配置</string>
-     </property>
-     <widget class="QWidget" name="layoutWidget_1">
-      <property name="geometry">
-       <rect>
-        <x>10</x>
-        <y>30</y>
-        <width>161</width>
-        <height>91</height>
-       </rect>
-      </property>
-      <layout class="QVBoxLayout" name="verticalLayout_3">
-       <property name="spacing">
-        <number>2</number>
-       </property>
-       <property name="topMargin">
-        <number>0</number>
-       </property>
-       <item>
-        <layout class="QFormLayout" name="formLayout">
-         <property name="formAlignment">
-          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-         </property>
-         <item row="0" column="0">
-          <widget class="QLabel" name="Label_SendAddr">
-           <property name="text">
-            <string>目标地址</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QSpinBox" name="SpinBox_SendAddr"/>
-         </item>
-        </layout>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_ResetRsModule">
-         <property name="text">
-          <string>重启模块</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QPushButton" name="pushButton_ResetConnectParam">
-         <property name="text">
-          <string>复位通讯参数</string>
-         </property>
-        </widget>
-       </item>
-      </layout>
-     </widget>
-    </widget>
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
-       <x>200</x>
+       <x>370</x>
        <y>10</y>
        <width>191</width>
        <height>201</height>
@@ -551,10 +447,124 @@
       </layout>
      </widget>
     </widget>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>180</x>
+       <y>10</y>
+       <width>181</width>
+       <height>131</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>模块配置</string>
+     </property>
+     <widget class="QWidget" name="layoutWidget_1">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>161</width>
+        <height>91</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_3">
+       <property name="spacing">
+        <number>2</number>
+       </property>
+       <property name="topMargin">
+        <number>0</number>
+       </property>
+       <item>
+        <layout class="QFormLayout" name="formLayout">
+         <property name="formAlignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+         <item row="0" column="0">
+          <widget class="QLabel" name="Label_SendAddr">
+           <property name="text">
+            <string>目标地址</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QSpinBox" name="SpinBox_SendAddr">
+           <property name="maximum">
+            <number>254</number>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_ResetRsModule">
+         <property name="text">
+          <string>重启模块</string>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_ResetConnectParam">
+         <property name="text">
+          <string>复位通讯参数</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
+    <widget class="QGroupBox" name="groupBox_Temp">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>151</width>
+       <height>171</height>
+      </rect>
+     </property>
+     <property name="title">
+      <string>实时温度</string>
+     </property>
+     <widget class="QWidget" name="verticalLayoutWidget_3">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>30</y>
+        <width>131</width>
+        <height>134</height>
+       </rect>
+      </property>
+      <layout class="QVBoxLayout" name="verticalLayout_4">
+       <item>
+        <widget class="QLineEdit" name="lineEdit_TempValue_1">
+         <property name="readOnly">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_TempValue_2"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_TempValue_3"/>
+       </item>
+       <item>
+        <widget class="QLineEdit" name="lineEdit_TempValue_4"/>
+       </item>
+       <item>
+        <widget class="QPushButton" name="pushButton_ReadTemp">
+         <property name="text">
+          <string>读取</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+    </widget>
    </widget>
-   <widget class="QWidget" name="tab_DamPt02">
+   <widget class="QWidget" name="tab2">
     <attribute name="title">
-     <string>PT02</string>
+     <string>自定义</string>
     </attribute>
    </widget>
   </widget>

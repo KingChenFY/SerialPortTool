@@ -449,18 +449,19 @@ QString QUIHelperData::byteArrayToHexStr(const QByteArray &data)
     return temp.trimmed().toUpper();
 }
 
-bool QUIHelperData::ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, QByteArray &parsedata)
+bool QUIHelperData::ParseRS68RetrunData(QByteArray &rs68data, quint8 &slaveaddr, quint8 &regnum, QByteArray &parsedata)
 {
     quint16 __crc_local, __crc_read;
     if(rs68data.size() < 7)
         return false;
     __crc_local = getModbus16( (quint8*)rs68data.data(), (rs68data.size()-2) );
-    __crc_read = byteToUShortRec(rs68data.sliced(5, 2));
+    __crc_read = byteToUShortRec(rs68data.sliced(rs68data.size()-2, 2));
 
     if( __crc_local == __crc_read )
     {
         slaveaddr = rs68data[0];
-        parsedata = rs68data.sliced(3, 2);
+        regnum = rs68data[2];
+        parsedata = rs68data.sliced(3, rs68data[2]);
         return true;
     }
     return false;

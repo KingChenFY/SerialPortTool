@@ -27,6 +27,7 @@ void frmComTool::initForm()
     sendCount = 0;
     receiveCount = 0;
     regAddr = 0;
+    sensornum = 1;
 
     //主动关联的槽
     connect(ui->pushButton_Send, SIGNAL(clicked()), this, SLOT(sendData()));
@@ -187,36 +188,66 @@ void frmComTool::append(int type, const QString &data, bool clear)
     currentCount++;
 }
 
-void frmComTool::RsModuleAppend(ushort regaddr, QByteArray prasedata)
+void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prasedata)
 {
-    int data = QUIHelperData::byteToUShort(prasedata);
+    ushort regnum =bytenum/2;
+    int data[64];
+    //data.resize(regnum);
+
+    for (int i = 0; i < regnum; i += 1) {
+        data[i] = QUIHelperData::byteToUShort(prasedata.sliced(i*2, 2));
+    }
     ui->SpinBox_SlaveAddrNum->setValue(regaddr);
 
     if(0 == regAddr)
     {
-        float tValue = data / 10.0;
-        QString stValue = QString("%1").arg(tValue);
-        ui->lineEdit_TempValue->setText(stValue);
+        if(sensornum < 2)
+        {
+            float tValue = data[0] / 100.0;
+            QString stValue = QString("%1").arg(tValue);
+            ui->lineEdit_TempValue_1->setText(stValue);
+
+            tValue = data[1] / 100.0;
+            stValue = QString("%1").arg(tValue);
+            ui->lineEdit_TempValue_2->setText(stValue);
+
+            sensornum++;
+            ui->SpinBox_SendAddr->setValue(sensornum);
+            on_pushButton_ReadTemp_clicked();
+        }
+        else
+        {
+            float tValue = data[0] / 100.0;
+            QString stValue = QString("%1").arg(tValue);
+            ui->lineEdit_TempValue_3->setText(stValue);
+
+            tValue = data[1] / 100.0;
+            stValue = QString("%1").arg(tValue);
+            ui->lineEdit_TempValue_4->setText(stValue);
+
+            sensornum = 1;
+            ui->SpinBox_SendAddr->setValue(sensornum);
+        }
     }
     else if(1 == regAddr)
     {
-        ui->SpinBox_SlaveAddrNum->setValue(data);
+        ui->SpinBox_SlaveAddrNum->setValue(data[0]);
     }
     else if(3 == regAddr)
     {
-        ui->comboBox_SlaveBaudRate->setCurrentIndex(data);
+        ui->comboBox_SlaveBaudRate->setCurrentIndex(data[0]);
     }
     else if(9 == regAddr)
     {
-        ui->comboBox_SlaveParity->setCurrentIndex(data);
+        ui->comboBox_SlaveParity->setCurrentIndex(data[0]);
     }
     else if(8 == regAddr)
     {
-        ui->comboBox_SlaveStopBits->setCurrentIndex(data);
+        ui->comboBox_SlaveStopBits->setCurrentIndex(data[0]);
     }
     else if(7 == regAddr)
     {
-        ui->comboBox_SlaveSensorType->setCurrentIndex(data);
+        ui->comboBox_SlaveSensorType->setCurrentIndex(data[0]);
     }
 }
 
@@ -237,6 +268,7 @@ void frmComTool::readData()
         QString buffer;
         QByteArray __parsedata;
         quint8 __slaveaddr;
+        quint8 __regnum;
 
         if (ui->checkBox_HexReceive->isChecked()) {
             buffer = QUIHelperData::byteArrayToHexStr(data);
@@ -264,9 +296,9 @@ void frmComTool::readData()
         receiveCount = receiveCount + data.size();
         ui->pushButton_ReceiveCnt->setText(QString("接收：%1 字节").arg(receiveCount));
 
-        if(QUIHelperData::ParseRS68RetrunData(data, __slaveaddr, __parsedata))
+        if(QUIHelperData::ParseRS68RetrunData(data, __slaveaddr, __regnum, __parsedata))
         {
-            RsModuleAppend(__slaveaddr, __parsedata);
+            RsModuleAppend(__slaveaddr, __regnum, __parsedata);
         }
 
         //启用网络转发则调用网络发送数据
@@ -453,8 +485,17 @@ void frmComTool::on_pushButton_ReadTemp_clicked()
     QByteArray __read_buffer;
 
     regAddr = 0;
-    ui->lineEdit_TempValue->clear();
-    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x03, regAddr, 1, __read_buffer);
+    if(1 == ui->SpinBox_SendAddr->value())
+    {
+        ui->lineEdit_TempValue_1->clear();
+        ui->lineEdit_TempValue_2->clear();
+    }
+    else
+    {
+        ui->lineEdit_TempValue_3->clear();
+        ui->lineEdit_TempValue_4->clear();
+    }
+    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x04, regAddr, 2, __read_buffer);
     sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
 }
 
