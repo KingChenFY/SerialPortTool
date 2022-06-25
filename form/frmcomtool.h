@@ -3,6 +3,7 @@
 
 #include <QWidget>
 #include "qextserialport.h"
+#include "xlsxdocument.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class frmComTool; }
@@ -28,7 +29,10 @@ private:
     bool isSave;                //是否保存
     int sleepTime;              //接收延时时间
     ushort regAddr;             //当前获取的寄存器地址
-    quint8 sensornum;
+    quint8 pt02AddrId;          //当前读的传感器
+    QString spt02log;
+    quint64 xlsx_row;
+    quint64 xlsx_col;
 
     QextSerialPort *com;        //串口通信对象
     bool comOk;                 //串口是否打开

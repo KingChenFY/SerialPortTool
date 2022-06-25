@@ -14,7 +14,7 @@ CONFIG += c++17
 
 TARGET      = serialporttool
 TEMPLATE    = app
-DESTDIR     = $$PWD/bin
+DESTDIR     = $$PWD/../serialporttool_bin
 
 HEADERS += head.h
 SOURCES += main.cpp
@@ -28,8 +28,11 @@ include ($$PWD/api/api.pri)
 INCLUDEPATH += $$PWD/form
 include ($$PWD/form/form.pri)
 
-INCLUDEPATH += $$PWD/3rd_qextserialport
-include ($$PWD/3rd_qextserialport/3rd_qextserialport.pri)
+INCLUDEPATH += $$PWD/3rdparty/qextserialport
+include ($$PWD/3rdparty/qextserialport/3rd_qextserialport.pri)
+
+INCLUDEPATH += $$PWD/3rdparty/qtxlsx
+include ($$PWD/3rdparty/qtxlsx/3rd_qtxlsx.pri)
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin

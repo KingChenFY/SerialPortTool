@@ -27,7 +27,9 @@ void frmComTool::initForm()
     sendCount = 0;
     receiveCount = 0;
     regAddr = 0;
-    sensornum = 1;
+    pt02AddrId = 1;
+    xlsx_row = 1;
+    xlsx_col = 1;
 
     //主动关联的槽
     connect(ui->pushButton_Send, SIGNAL(clicked()), this, SLOT(sendData()));
@@ -192,9 +194,9 @@ void frmComTool::append(int type, const QString &data, bool clear)
 void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prasedata)
 {
     ushort regnum =bytenum/2;
-    int data[64] = {0};
+
+    int data[2] = {0};
     float tValue1, tValue2;
-    QString sValue;
 
     for (int i = 0; i < regnum; i += 1) {
         data[i] = QUIHelperData::byteToUShort(prasedata.sliced(i*2, 2));
@@ -205,47 +207,34 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
     tValue2 = data[1] / 100.0;
     if(0 == regAddr)
     {
-        if(sensornum < ui->spinBox_pt02num->value())
+        if(1 == regaddr)
         {
-            if(1 == sensornum)
-            {
-                ui->lineEdit_TempValue_1->setText(QString("%1").arg(tValue1));
-                ui->lineEdit_TempValue_2->setText(QString("%1").arg(tValue2));
-                 sValue = QString("1, %1, 2, %2").arg(tValue1).arg(tValue2);
-            }
-            else
-            {
-                ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
-                ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
-                sValue = QString("3, %1, 4, %2").arg(tValue1).arg(tValue2);
-            }
-
-            if(isSave) {
-                saveData(sValue);
-            }
-            sensornum++;
-            ui->SpinBox_SendAddr->setValue(sensornum);
-            on_pushButton_ReadTemp_clicked();
+            ui->lineEdit_TempValue_1->setText(QString("%1").arg(tValue1));
+            ui->lineEdit_TempValue_2->setText(QString("%1").arg(tValue2));
+        }
+        else if(2 == regaddr)
+        {
+            ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
+            ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
         }
         else
         {
-            if(2 == sensornum)
-            {
-                ui->lineEdit_TempValue_3->setText(QString("%1").arg(tValue1));
-                ui->lineEdit_TempValue_4->setText(QString("%1").arg(tValue2));
-                sValue = QString("3, %1, 4, %2").arg(tValue1).arg(tValue2);
-            }
-            else
-            {
-                ui->lineEdit_TempValue_5->setText(QString("%1").arg(tValue1));
-                ui->lineEdit_TempValue_6->setText(QString("%1").arg(tValue2));
-                sValue = QString("5, %1, 6, %2").arg(tValue1).arg(tValue2);
-            }
-            if(isSave) {
-                saveData(sValue);
-            }
-            sensornum = 1;
-            ui->SpinBox_SendAddr->setValue(sensornum);
+            ui->lineEdit_TempValue_5->setText(QString("%1").arg(tValue1));
+            ui->lineEdit_TempValue_6->setText(QString("%1").arg(tValue2));
+        }
+        if(isSave) {
+            QString sValue;
+            sValue = QString("%1,%2").arg(tValue1).arg(tValue2);
+            saveData(sValue);
+        }
+        pt02AddrId++;
+        if(pt02AddrId <= ui->spinBox_pt02num->value())
+        {
+            QByteArray __read_buffer;
+
+            ui->SpinBox_SendAddr->setValue(pt02AddrId);
+            QUIHelperData::FormatRS68SendData(pt02AddrId, 0x04, regAddr, 2, __read_buffer);
+            sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
         }
     }
     else if(1 == regAddr)
@@ -307,9 +296,6 @@ void frmComTool::readData()
 //            }
 //        }
 
-//        if(isSave) {
-//            saveData(buffer);
-//        }
 
         append(1, buffer);
         receiveCount = receiveCount + data.size();
@@ -383,13 +369,36 @@ void frmComTool::saveData(QString &tempData)
 //    QString fileName = QString("%1/%2.txt").arg(ui->lineEdit_SaveDir->text()).arg(name);
 
     QString fileName = ui->lineEdit_SaveDir->text();
-    QFile file(fileName);
-    file.open(QFile::WriteOnly | QIODevice::Text | QIODevice::Append);
-    QTextStream out(&file);
-    QString strData = QString("T[%1],%2").arg(TIMEMS).arg(tempData);
-    out << strData << Qt::endl;
-    file.close();
+    QStringList list = fileName.split(".");
+    QString filetype = list.at(list.count() - 1);
+    QString strData = QString("%1").arg(TIMEMS);
 
+    if(filetype == "xlsx")
+    {
+         QXlsx::Document xlsx(fileName);
+        if(0 == regAddr)
+        {
+            QStringList tdatalist = tempData.split(",");
+            xlsx.write(xlsx_row, xlsx_col++, strData);
+            xlsx.write(xlsx_row, xlsx_col++, tdatalist.at(0));
+            xlsx.write(xlsx_row, xlsx_col++, tdatalist.at(1));
+            if(10 == xlsx_col)
+            {
+                xlsx_row++;
+                xlsx_col = 1;
+            }
+        }
+        xlsx.save();
+    }
+    else
+    {
+        QFile file(fileName);
+        file.open(QFile::WriteOnly | QIODevice::Text | QIODevice::Append);
+        QTextStream out(&file);
+        strData = strData + QString(",%1").arg(tempData);
+        out << strData << Qt::endl;
+        file.close();
+    }
 //    on_pushButton_ClearTxtMain_clicked();
 }
 
@@ -483,10 +492,32 @@ void frmComTool::on_checkBox_SaveInFile_stateChanged(int arg1)
     }
     else
     {
-        QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Text files (*.txt)"));
+        QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Excel files (*.xlsx);;Text files (*.txt)"));
     //    QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Text files (*.txt);;XML files (*.xml)"));
         if (!dir.isEmpty()) {
             ui->lineEdit_SaveDir->setText(dir);
+            QStringList list = dir.split(".");
+            QString filetype = list.at(list.count() - 1);
+
+            if(filetype == "xlsx")
+            {
+                QXlsx::Document xlsx;
+                xlsx_row = 1;
+                xlsx_col = 1;
+                xlsx.write(xlsx_row, xlsx_col++, tr("#1时间"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#1温度_1"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#1温度_2"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#2时间"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#2温度_1"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#2温度_2"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#3时间"));
+                xlsx.write(xlsx_row, xlsx_col++, tr("#3温度_1"));
+                xlsx.write(xlsx_row, xlsx_col, tr("#3温度_2"));
+                xlsx_row++;
+                xlsx_col = 1;
+                qDebug() << tr("create xlsx") << xlsx_row << xlsx_col;
+                xlsx.saveAs(dir);
+            }
             isSave = true;
         }
     }
@@ -504,22 +535,16 @@ void frmComTool::on_pushButton_ReadTemp_clicked()
     QByteArray __read_buffer;
 
     regAddr = 0;
-    if(1 == ui->SpinBox_SendAddr->value())
-    {
-        ui->lineEdit_TempValue_1->clear();
-        ui->lineEdit_TempValue_2->clear();
-    }
-    else if(2 == ui->SpinBox_SendAddr->value())
-    {
-        ui->lineEdit_TempValue_3->clear();
-        ui->lineEdit_TempValue_4->clear();
-    }
-    else
-    {
-        ui->lineEdit_TempValue_5->clear();
-        ui->lineEdit_TempValue_6->clear();
-    }
-    QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x04, regAddr, 2, __read_buffer);
+    pt02AddrId = 1;
+    ui->lineEdit_TempValue_1->clear();
+    ui->lineEdit_TempValue_2->clear();
+    ui->lineEdit_TempValue_3->clear();
+    ui->lineEdit_TempValue_4->clear();
+    ui->lineEdit_TempValue_5->clear();
+    ui->lineEdit_TempValue_6->clear();
+    ui->SpinBox_SendAddr->setValue(pt02AddrId);
+
+    QUIHelperData::FormatRS68SendData(pt02AddrId, 0x04, regAddr, 2, __read_buffer);
     sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
 }
 
