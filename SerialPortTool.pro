@@ -14,7 +14,8 @@ CONFIG += c++17
 
 TARGET      = serialporttool
 TEMPLATE    = app
-DESTDIR     = $$PWD/../serialporttool_bin
+#DESTDIR     = $$PWD/../serialporttool_bin
+DESTDIR     = $$PWD/bin
 
 HEADERS += head.h
 SOURCES += main.cpp

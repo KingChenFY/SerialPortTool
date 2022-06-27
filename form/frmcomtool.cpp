@@ -378,15 +378,17 @@ void frmComTool::saveData(QString &tempData)
          QXlsx::Document xlsx(fileName);
         if(0 == regAddr)
         {
+            quint8 __pt02num = ui->spinBox_pt02num->value();
             QStringList tdatalist = tempData.split(",");
             xlsx.write(xlsx_row, xlsx_col++, strData);
-            xlsx.write(xlsx_row, xlsx_col++, tdatalist.at(0));
-            xlsx.write(xlsx_row, xlsx_col++, tdatalist.at(1));
-            if(10 == xlsx_col)
+            xlsx.write(xlsx_row, xlsx_col++, tdatalist.at(0).toFloat());
+            xlsx.write(xlsx_row, xlsx_col++, tdatalist.at(1).toFloat());
+            if((__pt02num*3 + 1) == xlsx_col)
             {
                 xlsx_row++;
                 xlsx_col = 1;
             }
+
         }
         xlsx.save();
     }
@@ -501,21 +503,20 @@ void frmComTool::on_checkBox_SaveInFile_stateChanged(int arg1)
 
             if(filetype == "xlsx")
             {
-                QXlsx::Document xlsx;
+                quint8 __pt02num = ui->spinBox_pt02num->value();
                 xlsx_row = 1;
                 xlsx_col = 1;
-                xlsx.write(xlsx_row, xlsx_col++, tr("#1时间"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#1温度_1"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#1温度_2"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#2时间"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#2温度_1"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#2温度_2"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#3时间"));
-                xlsx.write(xlsx_row, xlsx_col++, tr("#3温度_1"));
-                xlsx.write(xlsx_row, xlsx_col, tr("#3温度_2"));
+
+                QXlsx::Document xlsx;
+                for(quint8 i =1; i <= __pt02num; i++)
+                {
+                    xlsx.write(xlsx_row, xlsx_col++, QString("#%1时间").arg(i));
+                    xlsx.write(xlsx_row, xlsx_col++, QString("#%1温度_1").arg(i));
+                    xlsx.write(xlsx_row, xlsx_col++, QString("#%1温度_2").arg(i));
+                }
                 xlsx_row++;
                 xlsx_col = 1;
-                qDebug() << tr("create xlsx") << xlsx_row << xlsx_col;
+//                qDebug() << tr("create xlsx") << xlsx_row << xlsx_col;
                 xlsx.saveAs(dir);
             }
             isSave = true;
@@ -622,7 +623,7 @@ void frmComTool::on_pushButton_ResetRsModule_clicked()
 
     __d_buffer.clear();
     __d_buffer.append(0x55);
-    __d_buffer.append(0xAA); ;
+    __d_buffer.append(0xAA);
     data = QUIHelperData::byteToUShort(__d_buffer);
 
     QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);
