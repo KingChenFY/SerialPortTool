@@ -2,7 +2,6 @@
 #define FRMCOMTOOL_H
 
 #include <QWidget>
-#include <QSerialPortInfo>
 
 #include "qextserialport.h"
 #include "xlsxdocument.h"
@@ -70,6 +69,5 @@ private slots:
     void on_pushButton_SlaveSet_clicked();
     void on_pushButton_ResetRsModule_clicked();
     void on_pushButton_ResetConnectParam_clicked();
-    void on_ComboBox_ComNumber_activated(int index);
 };
 #endif // FRMCOMTOOL_H

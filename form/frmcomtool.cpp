@@ -61,15 +61,6 @@ void frmComTool::initConfig()
 //    ui->ComboBox_ComNumber->addItems(comList);
 //    ui->ComboBox_ComNumber->setCurrentIndex(ui->ComboBox_ComNumber->findText(AppConfig::PortName));
 //    connect(ui->ComboBox_ComNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(saveConfig()));
-    QList<QSerialPortInfo> comList = QSerialPortInfo::availablePorts();
-    QStringList comNameList;
-    quint8 comAvaliableNum = comList.size();
-    if(0 != comAvaliableNum) {
-        for (int i = 0; i < comList.size(); i++) {
-            comNameList << comList.at(i).portName();
-        }
-        ui->ComboBox_ComNumber->addItems(comNameList);
-    }
 
     QStringList baudList;
     baudList << "50" << "75" << "100" << "134" << "150" << "200" << "300" << "600" << "1200"
@@ -655,11 +646,5 @@ void frmComTool::on_pushButton_ResetConnectParam_clicked()
 
     QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);
     sendData(QUIHelperData::byteArrayToHexStr(__write_buffer));
-}
-
-
-void frmComTool::on_ComboBox_ComNumber_activated(int index)
-{
-    qDebug() << "ComNumber clicked";
 }
 
