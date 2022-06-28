@@ -51,16 +51,25 @@ void frmComTool::initForm()
 
 void frmComTool::initConfig()
 {
-    QStringList comList;
-    for (int i = 1; i <= 20; i++) {
-        comList << QString("COM%1").arg(i);
+//    QStringList comList;
+//    for (int i = 1; i <= 20; i++) {
+//        comList << QString("COM%1").arg(i);
+//    }
+//    comList << "ttyUSB0" << "ttyS0" << "ttyS1" << "ttyS2" << "ttyS3" << "ttyS4";
+//    comList << "ttymxc1" << "ttymxc2" << "ttymxc3" << "ttymxc4";
+//    comList << "ttySAC1" << "ttySAC2" << "ttySAC3" << "ttySAC4";
+//    ui->ComboBox_ComNumber->addItems(comList);
+//    ui->ComboBox_ComNumber->setCurrentIndex(ui->ComboBox_ComNumber->findText(AppConfig::PortName));
+//    connect(ui->ComboBox_ComNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(saveConfig()));
+    QList<QSerialPortInfo> comList = QSerialPortInfo::availablePorts();
+    QStringList comNameList;
+    quint8 comAvaliableNum = comList.size();
+    if(0 != comAvaliableNum) {
+        for (int i = 0; i < comList.size(); i++) {
+            comNameList << comList.at(i).portName();
+        }
+        ui->ComboBox_ComNumber->addItems(comNameList);
     }
-    comList << "ttyUSB0" << "ttyS0" << "ttyS1" << "ttyS2" << "ttyS3" << "ttyS4";
-    comList << "ttymxc1" << "ttymxc2" << "ttymxc3" << "ttymxc4";
-    comList << "ttySAC1" << "ttySAC2" << "ttySAC3" << "ttySAC4";
-    ui->ComboBox_ComNumber->addItems(comList);
-    ui->ComboBox_ComNumber->setCurrentIndex(ui->ComboBox_ComNumber->findText(AppConfig::PortName));
-    connect(ui->ComboBox_ComNumber, SIGNAL(currentIndexChanged(int)), this, SLOT(saveConfig()));
 
     QStringList baudList;
     baudList << "50" << "75" << "100" << "134" << "150" << "200" << "300" << "600" << "1200"
@@ -646,5 +655,11 @@ void frmComTool::on_pushButton_ResetConnectParam_clicked()
 
     QUIHelperData::FormatRS68SendData(ui->SpinBox_SendAddr->value(), 0x06, regAddr, data, __write_buffer);
     sendData(QUIHelperData::byteArrayToHexStr(__write_buffer));
+}
+
+
+void frmComTool::on_ComboBox_ComNumber_activated(int index)
+{
+    qDebug() << "ComNumber clicked";
 }
 
