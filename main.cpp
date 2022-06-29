@@ -2,6 +2,8 @@
 #include "quihelper.h"
 
 #include <QApplication>
+#include <QMessageBox>
+#include <QDebug>
 
 int main(int argc, char *argv[])
 {

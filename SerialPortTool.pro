@@ -1,4 +1,4 @@
-QT       += core gui
+QT += core gui
 QT += core gui network
 QT += serialport
 
@@ -13,10 +13,10 @@ CONFIG += c++17
 # In order to do so, uncomment the following line.
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
-TARGET      = serialporttool
+TARGET      = pt02tool
 TEMPLATE    = app
-#DESTDIR     = $$PWD/../serialporttool_bin
-DESTDIR     = $$PWD/bin
+DESTDIR     = $$PWD/../pt02tool_bin
+#DESTDIR     = $$PWD/bin
 
 HEADERS += head.h
 SOURCES += main.cpp

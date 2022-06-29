@@ -16,3 +16,4 @@
 
 #include "appconfig.h"
 #include "appdata.h"
+#include "savelog.h"

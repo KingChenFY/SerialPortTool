@@ -1,7 +1,5 @@
 #include "frmcomtool.h"
 #include "ui_frmcomtool.h"
-#include <QMessageBox>
-#include <QDebug>
 
 #include "quihelper.h"
 #include "quihelperdata.h"
@@ -47,6 +45,13 @@ void frmComTool::initForm()
     //保存数据
 //    timerSave = new QTimer(this);
 //    connect(timerSave, SIGNAL(timeout()), this, SLOT(saveData()));
+
+    //设置是否开启日志上下文打印比如行号、函数等
+    SaveLog::Instance()->setUseContext(true);
+    //设置文件存储目录
+    SaveLog::Instance()->setPath(qApp->applicationDirPath() + "/" + QUIHelper::appName() + "log");
+    //安装日志钩子
+    SaveLog::Instance()->start();
 }
 
 void frmComTool::initConfig()
@@ -388,7 +393,6 @@ void frmComTool::saveData(QString &tempData)
                 xlsx_row++;
                 xlsx_col = 1;
             }
-
         }
         xlsx.save();
     }
@@ -494,18 +498,15 @@ void frmComTool::on_checkBox_SaveInFile_stateChanged(int arg1)
     }
     else
     {
-        QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Excel files (*.xlsx);;Text files (*.txt)"));
-    //    QString dir = QFileDialog::getSaveFileName(this, "Save File","",tr("Text files (*.txt);;XML files (*.xml)"));
-        if (!dir.isEmpty()) {
-            ui->lineEdit_SaveDir->setText(dir);
-            QStringList list = dir.split(".");
+        QString filename = QFileDialog::getSaveFileName(this, "Save File","",tr("Excel files (*.xlsx);;Text files (*.txt)"));
+        if (!filename.isEmpty()) {
+            ui->lineEdit_SaveDir->setText(filename);
+            QStringList list = filename.split(".");
             QString filetype = list.at(list.count() - 1);
 
-            if(filetype == "xlsx")
-            {
+            if("xlsx" == filetype) {
                 quint8 __pt02num = ui->spinBox_pt02num->value();
-                xlsx_row = 1;
-                xlsx_col = 1;
+                xlsx_row = xlsx_col = 1;
 
                 QXlsx::Document xlsx;
                 for(quint8 i =1; i <= __pt02num; i++)
@@ -516,8 +517,7 @@ void frmComTool::on_checkBox_SaveInFile_stateChanged(int arg1)
                 }
                 xlsx_row++;
                 xlsx_col = 1;
-//                qDebug() << tr("create xlsx") << xlsx_row << xlsx_col;
-                xlsx.saveAs(dir);
+                xlsx.saveAs(filename);
             }
             isSave = true;
         }
