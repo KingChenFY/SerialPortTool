@@ -3,6 +3,7 @@
 
 #include <QWidget>
 
+#include "frmtemperatureplot.h"
 #include "qextserialport.h"
 #include "xlsxdocument.h"
 
@@ -35,6 +36,7 @@ private:
     quint64 xlsx_row;
     quint64 xlsx_col;
 
+    FrmTemperatureplot* myPlot;
     QextSerialPort *com;        //串口通信对象
     bool comOk;                 //串口是否打开
 
@@ -44,6 +46,8 @@ private:
 
     int sendCount;              //发送数据累计
     int receiveCount;           //接收数据累计
+
+    QVector<float> *m;
 
 private slots:
     void initForm();            //初始化窗体数据

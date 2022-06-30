@@ -36,6 +36,9 @@ include ($$PWD/3rdparty/qextserialport/3rd_qextserialport.pri)
 INCLUDEPATH += $$PWD/3rdparty/qtxlsx
 include ($$PWD/3rdparty/qtxlsx/3rd_qtxlsx.pri)
 
+INCLUDEPATH += $$PWD/3rdparty/qcustomplot
+include ($$PWD/3rdparty/qcustomplot/3rd_qcustomplot.pri)
+
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
 else: unix:!android: target.path = /opt/$${TARGET}/bin

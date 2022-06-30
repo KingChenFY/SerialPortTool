@@ -28,6 +28,7 @@ void frmComTool::initForm()
     pt02AddrId = 1;
     xlsx_row = 1;
     xlsx_col = 1;
+    m = new QVector<float>(6);
 
     //主动关联的槽
     connect(ui->pushButton_Send, SIGNAL(clicked()), this, SLOT(sendData()));
@@ -52,6 +53,11 @@ void frmComTool::initForm()
     SaveLog::Instance()->setPath(qApp->applicationDirPath() + "/" + QUIHelper::appName() + "log");
     //安装日志钩子
     SaveLog::Instance()->start();
+
+//    myPlot = &FrmTemperatureplot::GetInstance();
+//    ui->tabWidget->addTab(myPlot, "PT02温度曲线图");
+    myPlot = new FrmTemperatureplot;
+    ui->tabWidget->addTab(myPlot, "PT02温度曲线图");
 }
 
 void frmComTool::initConfig()
@@ -202,14 +208,20 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
 
     int data[2] = {0};
     float tValue1, tValue2;
+    float *mData = m->data();
 
     for (int i = 0; i < regnum; i += 1) {
         data[i] = QUIHelperData::byteToUShort(prasedata.sliced(i*2, 2));
     }
     ui->SpinBox_SlaveAddrNum->setValue(regaddr);
 
-    tValue1 = data[0] / 100.0;
-    tValue2 = data[1] / 100.0;
+//    tValue1 = data[0] / 100.0;
+//    tValue2 = data[1] / 100.0;
+    static quint16 i;
+    tValue1 = i;
+    i++;
+    tValue2 = i;
+    i++;
     if(0 == regAddr)
     {
         if(1 == regaddr)
@@ -227,6 +239,8 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
             ui->lineEdit_TempValue_5->setText(QString("%1").arg(tValue1));
             ui->lineEdit_TempValue_6->setText(QString("%1").arg(tValue2));
         }
+        mData[regaddr*2-2] = tValue1;
+        mData[regaddr*2-1] = tValue2;
         if(isSave) {
             QString sValue;
             sValue = QString("%1,%2").arg(tValue1).arg(tValue2);
@@ -240,6 +254,10 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
             ui->SpinBox_SendAddr->setValue(pt02AddrId);
             QUIHelperData::FormatRS68SendData(pt02AddrId, 0x04, regAddr, 2, __read_buffer);
             sendData(QUIHelperData::byteArrayToHexStr(__read_buffer));
+        }
+        else
+        {
+            myPlot->drawDataPoint(ui->spinBox_pt02num->value()*2, *m);
         }
     }
     else if(1 == regAddr)
@@ -436,6 +454,7 @@ void frmComTool::on_pushButton_OpenCom_clicked()
         timerRead->stop();
         com->close();
         com->deleteLater();
+        myPlot->clearData();
 
         //changeEnable(false);
         ui->pushButton_OpenCom->setText("打开串口");
