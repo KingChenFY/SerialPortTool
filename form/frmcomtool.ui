@@ -95,7 +95,7 @@
        <item row="0" column="1">
         <widget class="serialportcombobox" name="ComboBox_ComNumber">
          <property name="editable">
-          <bool>true</bool>
+          <bool>false</bool>
          </property>
         </widget>
        </item>
@@ -563,7 +563,7 @@
       </layout>
      </widget>
     </widget>
-    <widget class="QWidget" name="">
+    <widget class="QWidget" name="layoutWidget">
      <property name="geometry">
       <rect>
        <x>10</x>

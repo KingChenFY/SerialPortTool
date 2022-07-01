@@ -215,13 +215,13 @@ void frmComTool::RsModuleAppend(ushort regaddr, ushort bytenum, QByteArray prase
     }
     ui->SpinBox_SlaveAddrNum->setValue(regaddr);
 
-//    tValue1 = data[0] / 100.0;
-//    tValue2 = data[1] / 100.0;
-    static quint16 i;
-    tValue1 = i;
-    i++;
-    tValue2 = i;
-    i++;
+    tValue1 = data[0] / 100.0;
+    tValue2 = data[1] / 100.0;
+//    static quint16 i;
+//    tValue1 = i;
+//    i++;
+//    tValue2 = i;
+//    i++;
     if(0 == regAddr)
     {
         if(1 == regaddr)
@@ -429,6 +429,11 @@ void frmComTool::saveData(QString &tempData)
 void frmComTool::on_pushButton_OpenCom_clicked()
 {
     if (ui->pushButton_OpenCom->text() == "打开串口") {
+        if("" == ui->ComboBox_ComNumber->currentText())
+        {
+            QMessageBox::warning(this, tr("Warning"), tr("串口号未填写！"), QMessageBox::Abort);
+            return;
+        }
         com = new QextSerialPort(ui->ComboBox_ComNumber->currentText(), QextSerialPort::Polling);
         comOk = com->open(QIODevice::ReadWrite);
 

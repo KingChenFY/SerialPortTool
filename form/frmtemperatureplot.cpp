@@ -20,6 +20,23 @@ void FrmTemperatureplot::initForm()
     QList<QColor> color;
     color << Qt::red << Qt::green << Qt::blue << Qt::yellow << Qt::black << Qt::gray;
 
+    QVector<QCPScatterStyle::ScatterShape> shapes;
+    shapes << QCPScatterStyle::ssCross;
+    shapes << QCPScatterStyle::ssPlus;
+    shapes << QCPScatterStyle::ssCircle;
+    shapes << QCPScatterStyle::ssDisc;
+    shapes << QCPScatterStyle::ssSquare;
+    shapes << QCPScatterStyle::ssDiamond;
+    shapes << QCPScatterStyle::ssStar;
+    shapes << QCPScatterStyle::ssTriangle;
+    shapes << QCPScatterStyle::ssTriangleInverted;
+    shapes << QCPScatterStyle::ssCrossSquare;
+    shapes << QCPScatterStyle::ssPlusSquare;
+    shapes << QCPScatterStyle::ssCrossCircle;
+    shapes << QCPScatterStyle::ssPlusCircle;
+    shapes << QCPScatterStyle::ssPeace;
+    shapes << QCPScatterStyle::ssCustom;
+
     ui->customPlot->legend->setVisible(true);
     ui->customPlot->legend->setFont(QFont("Helvetica", 9));
     ui->customPlot->legend->setRowSpacing(-3);
@@ -28,6 +45,7 @@ void FrmTemperatureplot::initForm()
         ui->customPlot->addGraph();
         ui->customPlot->graph(i)->setPen(QPen(color.at(i)));
         ui->customPlot->graph(i)->setName(QString("#%1温度").arg(i+1));
+        ui->customPlot->graph(i)->setScatterStyle(QCPScatterStyle((shapes.at(i)), 10));
     }
 
     QSharedPointer<QCPAxisTickerTime> timeTicker(new QCPAxisTickerTime);
@@ -46,7 +64,6 @@ void FrmTemperatureplot::drawDataPoint(quint8 sensorNum, QVector<float> &mTemp)
 
     for(quint8 i = 0; i < sensorNum; i++)
     {
-        ui->customPlot->graph(i)->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssTriangle, 10));
         ui->customPlot->graph(i)->addData(key, mTemp.data()[i]);
     }
     // make key axis range scroll with the data (at a constant range size of 8):
